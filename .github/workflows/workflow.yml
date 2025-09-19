@@ -12,3 +12,37 @@ jobs: #runs previous steps
   build:
     runs-on: ubuntu-latest #runner
     container: python:3.9-slim #ensures the same version is used
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3 #https://github.com/marketplace/actions/checkout
+      
+      - name: Install dependencies
+        run: | #runs shell to upgrade pip and install the dependencies from .txt
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+#The next step is to use flake8 to lint the source code. 
+#Linting is checking your code for syntactical and stylistic issues. 
+#Some examples are line spacing, using spaces or tabs for indentation, 
+#locating uninitialized or undefined variables, and missing parentheses. 
+#The flake8 library was installed as a dependency in the requirements.txt file.
+
+#flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
+#
+#    --count : shows the count of all warnings and errors in the result of the command
+#    --select=E9,F63,F7,F82 : limits the checks to syntax errors
+#    --show-source : adds the actual line number where the error/warning is found
+#    --statistics : shows the count of each type of error and warning in the result
+
+#flake8 service --count --max-complexity=10 --max-line-length=127 --statistics
+#    run all the available checks on the service folder of your repository.
+      
+      - name: Lint with flake8
+        run: |
+          flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 service --count --max-complexity=10 --max-line-length=127 --statistics
+#You will use nose in this step to unit test the source code. 
+#Nose is configured via the included setup.cfg file to automatically 
+#include the flags –with-spec and –spec-color so that red-green-refactor is meaningful. 
+      - name: Run unit test with nose
+        run: nosetests -v --with-spec --spec-color --with-coverage --cover-package=app
