@@ -1,0 +1,14 @@
+name: CI workflow #Identify which workflow it will be
+
+#Event triggers define which events can cause the workflow to run. 
+#You will use the on: tag to add the following events:
+on: 
+  push:  #starts every time somebody pushes to main, including merge
+    branches: ["main"] #[{if multiple}]
+  pull_request: #starts every time somebody pulls from main
+    branches: ["main"]
+
+jobs: #runs previous steps
+  build:
+    runs-on: ubuntu-latest #runner
+    container: python:3.9-slim #ensures the same version is used
